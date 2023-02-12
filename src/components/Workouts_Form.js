@@ -8,18 +8,19 @@ const WorkoutForm = () => {
   const [load, setload] = useState("");
   const [reps, setreps] = useState("");
   const [error, seterror] = useState(null);
+  const [emptyFields, setEmptyFields] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     const workout = { title, load, reps };
     await axios
       .post("http://localhost:4000/api/workouts", workout, { headers: { "Content-Type": "application/json" } })
       .then((result) => {
-        console.log(result);
         dispatch({ type: "CREATE_WORKOUT", payload: result.data });
+        setEmptyFields("");
       })
       .catch((err) => {
-        console.log(err);
-        seterror(err.message);
+        seterror(err.response.data.error);
+        setEmptyFields(err.response.data.emptyFields);
       })
       .finally(() => {
         setload("");
@@ -37,6 +38,7 @@ const WorkoutForm = () => {
         onChange={(e) => {
           settitle(e.target.value);
         }}
+        className={emptyFields.includes("title") ? "error" : ""}
       />
       <label for="">Load in kg</label>
       <input
@@ -45,6 +47,7 @@ const WorkoutForm = () => {
         onChange={(e) => {
           setload(e.target.value);
         }}
+        className={emptyFields.includes("load") ? "error" : ""}
       />
       <label for="">Reps</label>
       <input
@@ -53,6 +56,7 @@ const WorkoutForm = () => {
         onChange={(e) => {
           setreps(e.target.value);
         }}
+        className={emptyFields.includes("reps") ? "error" : ""}
       />
       <button>Add Workout</button>
       {error && <div className="error">{error}</div>}

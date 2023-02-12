@@ -12,7 +12,7 @@ const Home = () => {
       dispatch({ type: "SET_WORKOUTS", payload: response.data });
     };
     fetchWorkouts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="home">
